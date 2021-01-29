@@ -1,7 +1,7 @@
-# spdif_encoder
-S/PDIF encoder
+# spdif_frame_encoder
+S/PDIF frame encoder
 
-![spdif_encoder](https://user-images.githubusercontent.com/14823909/106313479-9e517400-62ab-11eb-9b72-e70e1a751065.png)
+![spdif_frame_encoder](https://user-images.githubusercontent.com/14823909/106313479-9e517400-62ab-11eb-9b72-e70e1a751065.png)
 
 |Name|Direction|Description|
 |--|--|--|
