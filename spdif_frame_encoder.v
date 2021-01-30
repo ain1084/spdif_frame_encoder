@@ -20,7 +20,7 @@ module spdif_frame_encoder(
 
     spdif_sub_frame_encoder sub_frame_encoder_inst(
         .clk128(clk128), .reset(reset), .i_valid(sub_frame_encoder_i_valid), .i_ready(i_ready),
-        .is_frame_start(is_frame_start), .i_is_left(i_is_left),
+        .i_is_frame_start(is_frame_start), .i_is_left(i_is_left),
         .i_audio(i_audio), .i_user(i_user), .i_control(i_control), .is_underrun(is_underrun), .spdif(spdif));
 
     always @(posedge clk128 or posedge reset) begin
