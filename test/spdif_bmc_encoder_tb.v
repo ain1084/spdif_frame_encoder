@@ -42,6 +42,7 @@ module spdif_bmc_encoder_tb();
             i_valid <= 1'b1;
             data <= data1;
             wait (i_ready) @(posedge mclk);    // transfer
+            @(posedge mclk);
             data <= data2;
             wait (i_ready) @(posedge mclk);    // transfer (burst)
             i_valid <= 1'b0;
@@ -59,6 +60,7 @@ module spdif_bmc_encoder_tb();
         repeat (4) @(posedge mclk);
 
         output_with_wait_multi(4'h9, 4'hC);
+//      output_with_wait(4'hC);
         output_with_wait(4'hA);
         output_with_wait(4'hA);
         output_with_wait(4'hA);

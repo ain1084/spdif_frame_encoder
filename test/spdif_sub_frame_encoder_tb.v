@@ -36,40 +36,50 @@ module spdif_sub_frame_encoder_tb();
     initial begin
 
         // reset
-        reset = 1'b0;
-        audio = 0;
-        is_frame_start = 1'b1;
-        is_left = 1'b0;
-        u = 1'b0;
-        c = 1'b0;
-        i_valid = 1'b0;
-        repeat (2) @(posedge clk128) reset = 1'b1;
-        @(posedge clk128) reset <= 1'b0;
-        repeat (4) @(posedge clk128);
+        reset = 1'b1;
+        audio <= 0;
+        is_frame_start <= 1'b1;
+        is_left <= 1'b0;
+        u <= 1'b0;
+        c <= 1'b0;
+        i_valid <= 1'b0;
+        repeat (2) @(posedge clk128) reset <= 1'b1;
+        repeat (2) @(posedge clk128) reset <= 1'b0;
 
         // sub-frame 1
-        audio = 24'hFFFFF8;
-        is_frame_start = 1'b1;
-        is_left = 1'b1;
-        u = 1'b1;
-        c = 1'b1;
-        i_valid = 1'b1;
+        audio <= 24'hFFFFF8;
+        is_frame_start <= 1'b1;
+        is_left <= 1'b1;
+        u <= 1'b1;
+        c <= 1'b1;
+        i_valid <= 1'b1;
+        wait (i_ready) @(posedge clk128);
+        i_valid <= 1'b0;
         @(posedge clk128);
-        i_valid = 1'b0;
-        repeat (63) @(posedge clk128);   // wait 63 clock (total 64 clock)
 
         // sub-frame 2
-        audio = 24'h123456;
-        is_frame_start = 1'b0;
-        is_left = 1'b0;
-        u = 1'b0;
-        c = 1'b0;
-        i_valid = 1'b1;
+        audio <= 24'h123456;
+        is_frame_start <= 1'b0;
+        is_left <= 1'b0;
+        u <= 1'b0;
+        c <= 1'b0;
+        i_valid <= 1'b1;
+        wait (i_ready) @(posedge clk128);
+        i_valid <= 1'b0;
         @(posedge clk128);
-        i_valid = 1'b0;
-        repeat (63) @(posedge clk128);   // wait 63 clock (total 64 clock)
 
-        repeat (64) @(posedge clk128);
+        // sub-frame 3
+        audio <= 24'h987655;
+        is_frame_start <= 1'b0;
+        is_left <= 1'b1;
+        u <= 1'b0;
+        c <= 1'b0;
+        i_valid <= 1'b1;
+        wait (i_ready) @(posedge clk128);
+        i_valid <= 1'b0;
+        @(posedge clk128);
+
+        repeat (64 + 4) @(posedge clk128);
 
         $finish;
     end
