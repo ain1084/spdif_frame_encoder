@@ -1,12 +1,12 @@
 `default_nettype none
 
-module spdif_frame_encoder(
+module spdif_frame_encoder #(parameter audio_width = 24)(
     input wire reset,
     input wire clk128,
     input wire i_valid,
     output wire i_ready,
     input wire i_is_left,
-    input wire [23:0] i_audio,
+    input wire [audio_width-1:0] i_audio,
     input wire i_user,
     input wire i_control,
     output reg [8:0] sub_frame_number,
@@ -18,7 +18,7 @@ module spdif_frame_encoder(
     wire is_frame_start = sub_frame_number == 9'd0;
     wire is_left_request = is_frame_start || !sub_frame_number[0];
 
-    spdif_sub_frame_encoder sub_frame_encoder_inst(
+    spdif_sub_frame_encoder #(.audio_width(audio_width)) sub_frame_encoder_inst (
         .clk128(clk128), .reset(reset), .i_valid(sub_frame_encoder_i_valid), .i_ready(i_ready),
         .i_is_frame_start(is_frame_start), .i_is_left(i_is_left),
         .i_audio(i_audio), .i_user(i_user), .i_control(i_control), .is_underrun(is_underrun), .spdif(spdif));

@@ -1,13 +1,13 @@
 `default_nettype none
 
-module spdif_sub_frame_encoder(
+module spdif_sub_frame_encoder #(parameter audio_width = 24)(
     input wire clk128,
     input wire reset,
     input wire i_valid,
     output wire i_ready,
     input wire i_is_frame_start,
     input wire i_is_left,
-    input wire [23:0] i_audio,
+    input wire [audio_width-1:0] i_audio,
     input wire i_user,
     input wire i_control,
     output wire is_underrun,
@@ -28,6 +28,16 @@ module spdif_sub_frame_encoder(
     spdif_bmc_encoder #(.width(4)) bmc_encoder_(
         .clk128(clk128), .reset(reset), .i_valid(o_valid_bmc), .i_ready(o_ready_bmc),
         .i_data(stage_data), .is_underrun(is_underrun), .q(spdif));
+
+	function [26:0] loadData(input control, input user, input [audio_width-1:0] audio);
+		localparam [23:0] ZERO = 0;
+		if (audio_width > 24)
+			loadData = { control, user, 1'b0 /* valid bit */, audio[audio_width-1:audio_width-24] };
+		else if (audio_width == 24)
+			loadData = { control, user, 1'b0 /* valid bit */, audio};
+		else
+			loadData = { control, user, 1'b0 /* valid bit */, audio, ZERO[23-audio_width:0]};
+	endfunction
 
     always @(posedge clk128 or posedge reset) begin
         if (reset) begin
@@ -55,7 +65,7 @@ module spdif_sub_frame_encoder(
             end
         end else begin
             if (i_valid) begin
-                data <= { i_control, i_user, 1'b0 /* valid bit */, i_audio };
+				data <= loadData(i_control, i_user, i_audio);
                 is_data_frame_start <= i_is_frame_start;
                 is_data_left <= i_is_left;
                 parity <= 0;
