@@ -29,14 +29,14 @@ module spdif_sub_frame_encoder #(parameter audio_width = 24)(
         .clk128(clk128), .reset(reset), .i_valid(o_valid_bmc), .i_ready(o_ready_bmc),
         .i_data(stage_data), .is_underrun(is_underrun), .q(spdif));
 
-	function [26:0] loadData(input control, input user, input [audio_width-1:0] audio);
+	function [23:0] getAlignAudio(input [audio_width-1:0] audio);
 		localparam [23:0] ZERO = 0;
 		if (audio_width > 24)
-			loadData = { control, user, 1'b0 /* valid bit */, audio[audio_width-1:audio_width-24] };
-		else if (audio_width == 24)
-			loadData = { control, user, 1'b0 /* valid bit */, audio};
+			getAlignAudio = audio[audio_width - 1:audio_width - 24];
+		else if (audio_width < 24)
+			getAlignAudio = { audio, ZERO[23 - audio_width:0] };
 		else
-			loadData = { control, user, 1'b0 /* valid bit */, audio, ZERO[23-audio_width:0]};
+			getAlignAudio = audio;
 	endfunction
 
     always @(posedge clk128 or posedge reset) begin
@@ -65,7 +65,7 @@ module spdif_sub_frame_encoder #(parameter audio_width = 24)(
             end
         end else begin
             if (i_valid) begin
-				data <= loadData(i_control, i_user, i_audio);
+				data <= { i_control, i_user, 1'b0 /* valid bit */, getAlignAudio(i_audio) };
                 is_data_frame_start <= i_is_frame_start;
                 is_data_left <= i_is_left;
                 parity <= 0;
