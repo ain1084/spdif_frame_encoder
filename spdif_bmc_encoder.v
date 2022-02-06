@@ -12,6 +12,7 @@ module spdif_bmc_encoder #(parameter width = 4)(
     reg is_valid_shift;
     reg [width-2:0] shift_data;
     reg [$clog2(width-1)-1:0] shift_count;
+    reg is_loaded;
 
     assign i_ready = !is_valid_shift;
 
@@ -22,25 +23,31 @@ module spdif_bmc_encoder #(parameter width = 4)(
             is_valid_shift <= 1'b0;
             shift_data <= 0;
             is_underrun <= 1'b0;
+            is_loaded <= 1'b0;
         end else begin
             if (is_valid_shift) begin
                 shift_count <= shift_count - 1'b1;
-                is_valid_shift <= shift_count != 0;
                 shift_data <= shift_data << 1;
                 q <= q ^ shift_data[width-2];
+                is_valid_shift <= shift_count != 0;
                 is_underrun <= 1'b0;
+                is_loaded <= 1'b1;
             end else begin
                 if (i_valid) begin
-                    is_valid_shift <= 1'b1;
                     shift_data <= i_data[width-2:0];
                     shift_count <= width - 2;
                     q <= q ^ i_data[width-1];
+                    is_valid_shift <= 1'b1;
                     is_underrun <= 1'b0;
+                    is_loaded <= 1'b1;
                 end else begin
                     is_valid_shift <= 1'b0;
-                    is_underrun <= 1'b1;
+                    if (is_loaded)
+                        is_underrun <= 1'b1;
+                    is_loaded <= 1'b0;
                 end
             end
         end
     end
 endmodule
+
