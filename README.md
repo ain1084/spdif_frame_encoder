@@ -1,5 +1,5 @@
 # spdif_frame_encoder
-S/PDIF frame encoder
+S/PDIF frame encoder.Using valid-ready handshake.
 
 ![spdif_frame_encoder](https://user-images.githubusercontent.com/14823909/149629420-517c9b49-473a-4f2e-8fc8-c6729dc98471.png)
 
