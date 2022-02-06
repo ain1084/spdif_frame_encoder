@@ -67,6 +67,8 @@ module spdif_frame_encoder #(parameter audio_width = 24)(
                 stage <= stage + 1'b1;
             end
         end else begin
+            if (is_underrun)
+                next_sub_frame_number <= 0;
             if (/* i_ready && */ i_valid) begin
                 if (is_sub_frame_left == i_is_left) begin
                     data <= { i_control, i_user, 1'b0 /* valid bit */, getAlignAudio(i_audio) };
@@ -79,8 +81,6 @@ module spdif_frame_encoder #(parameter audio_width = 24)(
                 is_valid_data <= 1'b0;
             end
         end
-        if (is_underrun)
-            next_sub_frame_number <= 0;
     end
 
 endmodule
