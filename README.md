@@ -12,6 +12,6 @@ S/PDIF frame encoder
 |i_is_left|input|i_audio channel (0: right / 1: left)|
 |i_user|input|Value of sub frame 'U' bit|
 |i_control|input|Value of sub frame 'C' bit|
-|sub_frame_number[8:0]|output|Current sub frame number (0-383)|
+|next_sub_frame_number[8:0]|output|Next sub frame number (0-383). The next sub frame number requested when i_valid is signaled. |
 |i_ready|output|Data incoming ready|
 |spdif|output|S/PDIF signal output|
